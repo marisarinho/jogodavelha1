@@ -1,7 +1,7 @@
 package jogo;
 import java.util.LinkedHashMap;
 import java.util.ArrayList;
-
+//ooi
 public class JogoDaVelha {
 	  	private String[] celulas = new String[9]; 
 	    private String[] simbolos = new String[2];
