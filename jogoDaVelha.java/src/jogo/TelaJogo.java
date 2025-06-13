@@ -2,11 +2,16 @@ package jogo;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.LinkedHashMap;
+
+
 
 public class TelaJogo extends JFrame {
     private JButton[] botoes = new JButton[9];
     private JogoDaVelha jogo;
     private JLabel status;
+    private JButton botaoHistorico;
+
     private boolean contraMaquina;
     private int jogadorAtual = 1; 
 
@@ -37,12 +42,25 @@ public class TelaJogo extends JFrame {
         status.setOpaque(true);
         status.setBackground(rosaClaro);                  
         status.setFont(new Font("Arial", Font.BOLD, 14));
-        add(status, BorderLayout.SOUTH);
+        JPanel painelInferior = new JPanel(new BorderLayout());
+        painelInferior.setBackground(rosaClaro);
+
+        botaoHistorico = new JButton("Ver Histórico");
+        botaoHistorico.setFocusPainted(false);
+        botaoHistorico.addActionListener(e -> mostrarHistorico());
+
+        painelInferior.add(status, BorderLayout.CENTER);
+        painelInferior.add(botaoHistorico, BorderLayout.EAST);
+
+        add(painelInferior, BorderLayout.SOUTH);
+
 
         add(tabuleiro, BorderLayout.CENTER);
+        
         escolherModo();
 
         setVisible(true);
+        
     }
 
     private void escolherModo() {
@@ -110,6 +128,21 @@ public class TelaJogo extends JFrame {
             JOptionPane.showMessageDialog(this, msg);
         }
     }
+    private void mostrarHistorico() {
+        LinkedHashMap<Integer, String> historico = jogo.getHistorico();
+        if (historico.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Nenhuma jogada feita ainda!");
+            return;
+        }
+
+        StringBuilder texto = new StringBuilder("Histórico de jogadas:\n");
+        for (Integer pos : historico.keySet()) {
+            texto.append("Posição ").append(pos).append(" -> ").append(historico.get(pos)).append("\n");
+        }
+
+        JOptionPane.showMessageDialog(this, texto.toString());
+    }
+
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(TelaJogo::new);
