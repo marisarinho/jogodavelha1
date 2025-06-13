@@ -76,7 +76,7 @@ public class TelaJogo extends JFrame {
             status.setText("Jogador 1: " + simbolo1);
         } else if (escolha == 1) {
             String simbolo = JOptionPane.showInputDialog("Símbolo do Jogador (ex: X)");
-            jogo = new JogoDaVelha(simbolo, 1); 
+            jogo = new JogoDaVelha(simbolo, 2); 
             contraMaquina = true;
             status.setText("Você: " + simbolo);
         } else {
@@ -92,7 +92,11 @@ public class TelaJogo extends JFrame {
                 jogo.jogaJogador(jogadorAtual, pos);
                 botoes[pos].setText(jogo.getSimbolo(jogadorAtual));
                 checarFim();
-                jogadorAtual = (jogadorAtual == 1) ? 2 : 1;
+                if (jogadorAtual == 1) {
+                    jogadorAtual = 2;
+                } else {
+                    jogadorAtual = 1;
+                }
                 status.setText("Jogador " + jogadorAtual + ": " + jogo.getSimbolo(jogadorAtual));
             } else {
                 jogo.jogaJogador(1, pos);
@@ -111,18 +115,34 @@ public class TelaJogo extends JFrame {
 
     private void atualizarTabuleiro() {
         String[] estados = jogo.getFoto().replace(" | ", "").replace("\n", "").split("");
+
         for (int i = 0; i < estados.length; i++) {
-            botoes[i].setText(estados[i].equals("-") ? "" : estados[i]);
+            if (estados[i].equals("-")) {
+                botoes[i].setText(""); // se for "-", deixa o botão vazio
+            } else {
+                botoes[i].setText(estados[i]); // se for "X" ou "O", mostra no botão
+            }
         }
     }
-
     private void checarFim() {
         if (jogo.terminou()) {
             int resultado = jogo.getResultado();
             String msg = "";
-            if (resultado == 0) msg = "Empate!";
-            else if (resultado == 1) msg = contraMaquina ? "Você venceu!" : "Jogador 1 venceu!";
-            else msg = contraMaquina ? "A máquina venceu!" : "Jogador 2 venceu!";
+            if (resultado == 0) {
+                msg = "Empate!";
+            } else if (resultado == 1) {
+                if (contraMaquina) {
+                    msg = "Você venceu!";
+                } else {
+                    msg = "Jogador 1 venceu!";
+                }
+            } else {
+                if (contraMaquina) {
+                    msg = "A máquina venceu!";
+                } else {
+                    msg = "Jogador 2 venceu!";
+                }
+            }
 
             status.setText(msg);
             JOptionPane.showMessageDialog(this, msg);
@@ -137,7 +157,8 @@ public class TelaJogo extends JFrame {
 
         StringBuilder texto = new StringBuilder("Histórico de jogadas:\n");
         for (Integer pos : historico.keySet()) {
-            texto.append("Posição ").append(pos).append(" -> ").append(historico.get(pos)).append("\n");
+            String simbolo = historico.get(pos);
+            texto.append("Posição " + pos + " -> " + simbolo + "\n");
         }
 
         JOptionPane.showMessageDialog(this, texto.toString());
