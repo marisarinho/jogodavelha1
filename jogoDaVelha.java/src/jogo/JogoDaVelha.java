@@ -1,237 +1,171 @@
 package jogo;
+//Alunas : Maria Clara Almeida Gomes Silva e Mariana dos Santos Sarinho
+import javax.swing.*;
+import java.awt.*;
 import java.util.LinkedHashMap;
-import java.util.ArrayList;
-
-public class JogoDaVelha {
-	  	private String[] celulas = new String[9]; 
-	    private String[] simbolos = new String[2];
-	    private LinkedHashMap<Integer, String> historico = new LinkedHashMap<>();
-	    private int quantidadeJogadas = 0;
-	    private int nivel = 2; 
-	    
-	    
-	    public JogoDaVelha(String simbolo1, String simbolo2){
-	    	this.simbolos[0] = simbolo1;
-	    	this.simbolos[1] = simbolo2;
-	    	
-	    }
-	    
-	   
-	    public JogoDaVelha(String nomeJogador1, int nivel) {
-	    	this.nivel = nivel;
-	    	this.simbolos[0] = "X";
-	    	
-	    }
-	    
-	    public void jogaJogador(int numeroJogador, int posicao) throws Exception {
-	     
-	        if (posicao < 0 || posicao > 8) {
-	            throw new Exception("Posição inválida! Escolha de 0 a 8.");
-	        }
-	        if (numeroJogador !=1 && numeroJogador !=2) {
-	        	throw new Exception("Número errado. Escolha 1 ou 2.");
-	        }
-	        
-	        if (celulas[posicao]!= null) {
-	            throw new Exception("Essa posição já está ocupada!");
-	        }
-
-	   
-	        celulas[posicao] = simbolos[numeroJogador - 1];
-
-	       
-	        historico.put(posicao, simbolos[numeroJogador - 1]);
-
-	        quantidadeJogadas++;
-	    }
-
-	    
-	    public int JogaMaquina() {
-	        
-	        if (this.nivel == 1) {
-	            for (int i = 0; i < celulas.length; i++) {
-	                if (celulas[i] == null) {
-	                    celulas[i] = "m";
-	                    quantidadeJogadas++;
-	                    return i;
-	                }
-	            }
-	        }
-
-	       
-	        if (this.nivel == 2) {
-	            int[][] combinacoes = {
-	                {0,1,2}, {3,4,5}, {6,7,8},
-	                {0,3,6}, {1,4,7}, {2,5,8},
-	                {0,4,8}, {2,4,6}
-	            };
-
-	          
-	            for (int[] c : combinacoes) {
-	                int countM = 0;
-	                int posVazia = -1;
-
-	                for (int pos : c) {
-	                    if ("m".equals(celulas[pos])) countM++;
-	                    else if (celulas[pos] == null) posVazia = pos;
-	                }
-
-	                if (countM == 2 && posVazia != -1) {
-	                    celulas[posVazia] = "m";
-	                    quantidadeJogadas++;
-	                    return posVazia;
-	                }
-	            }
-
-	         
-	            for (int[] c : combinacoes) {
-	                int countJ = 0;
-	                int posVazia = -1;
-
-	                for (int pos : c) {
-	                    if ("X".equals(celulas[pos])) countJ++;
-	                    else if (celulas[pos] == null) posVazia = pos;
-	                }
-
-	                if (countJ == 2 && posVazia != -1) {
-	                    celulas[posVazia] = "m";
-	                    quantidadeJogadas++;
-	                    return posVazia;
-	                }
-	            }
-
-	          
-	            for (int j = 0; j < celulas.length; j++) {
-	                if (celulas[j] == null) {
-	                    celulas[j] = "m";
-	                    quantidadeJogadas++;
-	                    return j;
-	                }
-	            }
-	        }
-
-	        return -1; // não conseguiu jogar
-	    }
-	    
-	    
-	    
-	    
-	    private String getSimboloVencedor() {
-	        int[][] combinacoes = {
-	            {0,1,2}, {3,4,5}, {6,7,8},
-	            {0,3,6}, {1,4,7}, {2,5,8},
-	            {0,4,8}, {2,4,6}
-	        };
-
-	        for (int[] combinacao : combinacoes) {
-	            int a = combinacao[0];
-	            int b = combinacao[1];
-	            int c = combinacao[2];
-
-	            if (celulas[a] != null && celulas[a].equals(celulas[b]) && celulas[a].equals(celulas[c])) {
-	                return celulas[a]; 
-	            }
-	        }
-
-	        return null; 
-	    }
-	    
-	    
-	    
-	    public boolean terminou() {
-	        return getSimboloVencedor() != null || quantidadeJogadas == 9;
-	    }
-
-	    public int getResultado() {
-	        if (!terminou()) return -1;
-
-	        String vencedor = getSimboloVencedor();
-
-	        if (vencedor == null) return 0; 
-
-	        if (vencedor.equals(simbolos[0])) return 1;
-	        else return 2;
-	    }
-
-	   	    
-	    public String getFoto() {
-	        String foto = "";
-
-	        for (int i = 0; i < celulas.length; i++) {
-	            if (celulas[i] == null) {
-	                foto += "-";
-	            } else {
-	                foto += celulas[i];
-	            }
-
-	            if ((i + 1) % 3 != 0) {
-	                foto += " | ";
-	            } else {
-	                foto += "\n";
-	            }
-	        }
-
-	        return foto;
-	    }
-
-	    public String getSimbolo(int numeroJogador) {
-	    	return simbolos[numeroJogador - 1];
-	    }
-	    
-	    
-	    public ArrayList<Integer> getPosicoesDisponiveis(){
-	    	ArrayList<Integer> disponiveis = new ArrayList<>();
-	    	for (int i=0; i<celulas.length; i++) {
-	    		if(celulas[i] == null) {
-	    			disponiveis.add(i);
-	    		}
-	    	}
-	    	return disponiveis;
-	    }
-	    
-	    
-	    
-	    public LinkedHashMap<Integer, String> getHistorico(){
-	    	return historico;
-	    }
-	    
-	    public int getTotalJogadas() {
-		    return quantidadeJogadas;
-		}
-    
-	
-	    public static void main(String[] args) {
-	        try {
-	           
-	            JogoDaVelha jogo = new JogoDaVelha("Jogador", 2);
-	            
-	      
-	            jogo.jogaJogador(1, 0);
-	            int jogadaMaquina = jogo.JogaMaquina(); 
-	            System.out.println("Máquina jogou na posição: " + jogadaMaquina);
-
-	            jogo.jogaJogador(1, 2);
-	            jogadaMaquina = jogo.JogaMaquina();
-	            System.out.println("Máquina jogou na posição: " + jogadaMaquina);
-
-	            jogo.jogaJogador(1, 4);
-
-	            System.out.println(jogo.getFoto());
-
-	            if (jogo.terminou()) {
-	                int resultado = jogo.getResultado();
-	                if (resultado == 1) {
-	                    System.out.println("Jogador venceu!");
-	                } else if (resultado == 2) {
-	                    System.out.println("Máquina venceu!");
-	                } else {
-	                    System.out.println("Empate!");
-	                }
-	            }
-	        } catch (Exception e) {
-	            System.out.println("Erro: " + e.getMessage());
-	        }
-	    }
 
 
+
+public class TelaJogo extends JFrame {
+    private JButton[] botoes = new JButton[9];
+    private JogoDaVelha jogo;
+    private JLabel status;
+    private JButton botaoHistorico;
+
+    private boolean contraMaquina;
+    private int jogadorAtual = 1; 
+
+    private Color rosaClaro = new Color(255, 192, 203);       
+    private Color rosaMaisClaro = new Color(255, 228, 235);  
+
+    public TelaJogo() {
+        setTitle("Jogo da Velha");
+        setSize(300, 350);
+        setDefaultCloseOperation(EXIT_ON_CLOSE); //Faz com que, ao clicar no X (fechar), o
+        //programa seja finalizado completamente
+        setLayout(new BorderLayout()); //Define o layout principal da janela. 
+        getContentPane().setBackground(rosaMaisClaro);  
+        JPanel tabuleiro = new JPanel(new GridLayout(3, 3));
+        //Cria um painel chamado tabuleiro que será uma grade de 3 linhas e 3 colunas (como o jogo da velha).
+        tabuleiro.setBackground(rosaMaisClaro);          
+        for (int i = 0; i < 9; i++) { //Criando os 9 botões
+            final int pos = i;
+            botoes[i] = new JButton("");
+            botoes[i].setFont(new Font("Arial", Font.BOLD, 40));
+            botoes[i].setBackground(rosaClaro);          
+            botoes[i].setFocusPainted(false); // Tira aquele contorno azul que aparece quando clicamos no botão.
+            botoes[i].addActionListener(e -> jogar(pos));
+            tabuleiro.add(botoes[i]);
+        }
+
+        status = new JLabel("Escolha o modo de jogo", SwingConstants.CENTER);
+        status.setOpaque(true);
+        status.setBackground(rosaClaro);                  
+        status.setFont(new Font("Arial", Font.BOLD, 14));
+        JPanel painelInferior = new JPanel(new BorderLayout());
+        painelInferior.setBackground(rosaClaro);
+
+        botaoHistorico = new JButton("Ver Histórico");
+        botaoHistorico.setFocusPainted(false);
+        botaoHistorico.addActionListener(e -> mostrarHistorico());
+
+        painelInferior.add(status, BorderLayout.CENTER);
+        painelInferior.add(botaoHistorico, BorderLayout.EAST);
+
+        add(painelInferior, BorderLayout.SOUTH);
+
+
+        add(tabuleiro, BorderLayout.CENTER);
+        
+        escolherModo();
+
+        setVisible(true);
+        
+    }
+
+    private void escolherModo() {
+        String[] opcoes = {"2 Jogadores", "Contra Máquina"};
+        int escolha = JOptionPane.showOptionDialog(this, "Escolha o modo de jogo:", "Modo de Jogo",
+                JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, opcoes, opcoes[0]);
+
+        if (escolha == 0) {
+            String simbolo1 = JOptionPane.showInputDialog("Símbolo do Jogador 1 (ex: X)");
+            String simbolo2 = JOptionPane.showInputDialog("Símbolo do Jogador 2 (ex: O)");
+            jogo = new JogoDaVelha(simbolo1, simbolo2);
+            contraMaquina = false;
+            status.setText("Jogador 1: " + simbolo1);
+        } else if (escolha == 1) {
+            String simbolo = JOptionPane.showInputDialog("Símbolo do Jogador (ex: X)");
+            jogo = new JogoDaVelha(simbolo, 2); 
+            contraMaquina = true;
+            status.setText("Você: " + simbolo);
+        } else {
+            System.exit(0);
+        }
+    }
+
+    private void jogar(int pos) {
+        if (jogo.terminou() || !botoes[pos].getText().equals("")) return;
+
+        try {
+            if (!contraMaquina) {
+                jogo.jogaJogador(jogadorAtual, pos);
+                botoes[pos].setText(jogo.getSimbolo(jogadorAtual));
+                checarFim();
+                if (jogadorAtual == 1) {
+                    jogadorAtual = 2;
+                } else {
+                    jogadorAtual = 1;
+                }
+                status.setText("Jogador " + jogadorAtual + ": " + jogo.getSimbolo(jogadorAtual));
+            } else {
+                jogo.jogaJogador(1, pos);
+                botoes[pos].setText(jogo.getSimbolo(1));
+                checarFim();
+                if (!jogo.terminou()) {
+                    jogo.JogaMaquina();
+                    atualizarTabuleiro();
+                    checarFim();
+                }
+            }
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage());
+        }
+    }
+
+    private void atualizarTabuleiro() {
+        String[] estados = jogo.getFoto().replace(" | ", "").replace("\n", "").split("");
+
+        for (int i = 0; i < estados.length; i++) {
+            if (estados[i].equals("-")) {
+                botoes[i].setText(""); // se for "-", deixa o botão vazio
+            } else {
+                botoes[i].setText(estados[i]); // se for "X" ou "O", mostra no botão
+            }
+        }
+    }
+    private void checarFim() {
+        if (jogo.terminou()) {
+            int resultado = jogo.getResultado();
+            String msg = "";
+            if (resultado == 0) {
+                msg = "Empate!";
+            } else if (resultado == 1) {
+                if (contraMaquina) {
+                    msg = "Você venceu!";
+                } else {
+                    msg = "Jogador 1 venceu!";
+                }
+            } else {
+                if (contraMaquina) {
+                    msg = "A máquina venceu!";
+                } else {
+                    msg = "Jogador 2 venceu!";
+                }
+            }
+
+            status.setText(msg);
+            JOptionPane.showMessageDialog(this, msg);
+        }
+    }
+    private void mostrarHistorico() {
+        LinkedHashMap<Integer, String> historico = jogo.getHistorico();
+        if (historico.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Nenhuma jogada feita ainda!");
+            return;
+        }
+
+        StringBuilder texto = new StringBuilder("Histórico de jogadas:\n");
+        for (Integer pos : historico.keySet()) {
+            String simbolo = historico.get(pos);
+            texto.append("Posição " + pos + " -> " + simbolo + "\n");
+        }
+
+        JOptionPane.showMessageDialog(this, texto.toString());
+    }
+
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(TelaJogo::new);
+    }
 }
